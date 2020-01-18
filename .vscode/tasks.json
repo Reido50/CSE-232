@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "-g", "01.01-HelloWorld.cpp"
+                "-std=c++17", "01.01-HelloWorld.cpp"
             ],
             "group": {
                 "kind": "build",
