@@ -11,7 +11,7 @@ int main(){
     // take two ints at input
     int num1, num2;
     cin >> num1 >> num2;
-
+    
     int product = num1 * num2;
     do{
         cout << product << endl;
