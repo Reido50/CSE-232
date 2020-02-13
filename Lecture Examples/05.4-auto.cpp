@@ -1,6 +1,7 @@
 #include<iostream>
 using std::cout; using std::endl; using std::cin;
-
+#include<string>
+using std::string;
 
 int main() {
     // using, better than old typdef
@@ -22,8 +23,13 @@ int main() {
     long &my_ref = my_long;
     // auto_long is of type long
     auto auto_long = my_ref;
+    auto auto_long2 = &my_long;
     my_long = 456;
-    cout << my_ref << "," << my_long << "," << auto_long << endl;
+    cout << my_ref << "," << my_long << "," << auto_long << auto_long2 << endl;
+
+    string s = "hello";
+    string * const s2 = &s;
+    auto s3 = s2;
 
     const long my_const = my_long;
     // another_long is of type long
