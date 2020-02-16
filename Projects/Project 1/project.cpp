@@ -1,7 +1,12 @@
 /*  Reid Harry
     2/13/2020
     A program that can convert and do math in different bases.
-    Input: Valid positive integers. Only bases 1-9. Will fit in an int.
+    Input:  Three integers and a character. 
+            num1 and num2 are numbers of a certain based that will be used in the operation specified
+            base is the base of num1 and num2
+            sign is the character of the operation the user would like to perform on num1 and num2 (+,-,*,/, or %)
+            Valid positive integers. Only bases 1-9. Will fit in an int.
+    Output: The integer result of the operation specified in the base specified.
 */
 
 #include<iostream>
@@ -17,8 +22,8 @@ using std::pow;
 int convert_other_base_to_decimal(int num, int base){
     int deci_num = 0;
 
-    for(int i = 0; num < 0; i++){
-        deci_num += pow(num % 10, i);
+    for(int i = 0; num > 0; i++){
+        deci_num += (num % 10) * (pow(base, i));
         num /= 10;
     }
     
@@ -35,7 +40,7 @@ int convert_decimal_to_other_base(int deci_num, int base){
     int num = 0;
 
     for(int i = 1; deci_num > 0; i *= 10){
-        num += i * (deci_num % base);
+        num += (i * (deci_num % base));
         deci_num /= base;
     }
 
@@ -48,17 +53,23 @@ int convert_decimal_to_other_base(int deci_num, int base){
     can be one of + - * / %     */
 int math_in_other_base(int num1, int num2, int base, char sign){
     if      (sign == '+'){
-        
+        return convert_decimal_to_other_base(convert_other_base_to_decimal(num1, base) + 
+               convert_other_base_to_decimal(num2, base), base);
     }else if(sign == '-'){
-
+        return convert_decimal_to_other_base(convert_other_base_to_decimal(num1, base) - 
+               convert_other_base_to_decimal(num2, base), base);
     }else if(sign == '*'){
-
+        return convert_decimal_to_other_base(convert_other_base_to_decimal(num1, base) * 
+               convert_other_base_to_decimal(num2, base), base);
     }else if(sign == '/'){
-
+        return convert_decimal_to_other_base(convert_other_base_to_decimal(num1, base) / 
+               convert_other_base_to_decimal(num2, base), base);
     }else if(sign == '%'){
-
+        return convert_decimal_to_other_base(convert_other_base_to_decimal(num1, base) % 
+               convert_other_base_to_decimal(num2, base), base);
     }else{
-
+        cout << "Invalid Sign!";
+        return -1;
     }
 }
 
