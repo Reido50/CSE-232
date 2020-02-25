@@ -14,28 +14,36 @@ using std::string; using std::getline;
 using std::istringstream; using std::ostringstream;
 
 string LastnameFirstname(string s){
-    istringstream stream, small_stream;
+    istringstream stream;
     stream.str(s);
 
-    string temp1, temp2, temp3, last, first, final;
+    string temp1, last, first, final;
 
     while(getline(stream, temp1)){
+        string temp2, temp3;
+        istringstream small_stream;
+
         small_stream.str(temp1);
-        temp1 = "";
         while(small_stream >> temp2){
-            temp1 += temp2 + " ";
+            temp3 += " " + temp2;
         }
 
-        for(int i = temp2.length()-1; true; i--){
-            if(temp2[i] == ' '){
-                first = temp2.substr(0, i);
-                last = temp2.substr(i+1);
+        for(int i = temp3.length()-1; true; i--){
+            if(temp3[i] == ' '){
+                first = temp3.substr(1, i);
+                last = temp3.substr(i+1);
                 break;
             }
         }
 
-        final += last + ", " + first + '\n';
+        first.pop_back();
+
+        final += last + ", " + first + "\n";
     }
 
     return final;
+}
+
+int main(){
+    cout << LastnameFirstname("Reid Harry\n Luke Jerry\n Brett Hicks");
 }
