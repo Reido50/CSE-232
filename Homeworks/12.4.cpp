@@ -8,7 +8,7 @@
 */
 
 #include<string>
-using std::string;
+using std::string; using std::to_string;
 #include<sstream>
 using std::istringstream;
 #include<iostream>
@@ -16,17 +16,20 @@ using std::cout;
 
 template<typename T>
 T AllConvert(const string & s, int * i){
-    T var;
-    istringstream iss(s), iss2;
-    string temp = "";
+    istringstream iss(s), iss2(s);
+    char remaining;
+    int count = 0;
+    T value;
 
-    iss >> var;
+    iss >> value;
 
-    temp = (string)var;
+    while(iss.get(remaining)){
+        count++;
+    }
 
-    *i = temp.length();
+    *i = s.length() - count;
 
-    return var;
+    return value;
 }
 
 int main(){
