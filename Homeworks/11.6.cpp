@@ -17,7 +17,7 @@ string LastnameFirstname(string s){
     istringstream stream;
     stream.str(s);
 
-    string temp1, last, first, final;
+    string temp1, last, first, fin;
 
     while(getline(stream, temp1)){
         string temp2, temp3;
@@ -38,10 +38,10 @@ string LastnameFirstname(string s){
 
         first.pop_back();
 
-        final += last + ", " + first + "\n";
+        fin += last + ", " + first + "\n";
     }
 
-    return final;
+    return fin;
 }
 
 int main(){
