@@ -1,9 +1,11 @@
 #include <string>
 using std::string;
 #include <vector>
+using std::vector;
 #include<algorithm>
-using std::all_of;
-
+using std::all_of; using std::find;
+#include<numeric>
+using std::accumulate;
 /*
 This function should return true if and only if
 every character in the input is one of ATCG.
@@ -12,6 +14,8 @@ bool IsValidDNASequence(const string & input){
     if(all_of(input.begin(), input.end(), [](char c){return (c == 'A' || c == 'T' || c == 'C' || c == 'G');})){
         return true;
     }
+
+    return false;
 }
 
 /*
@@ -44,6 +48,37 @@ void GetReverseComplementSequence(const string & input,  string * const output){
     }
 }
 
+/*
+This function converts a string reference of DNA into RNA
+
+input: DNA sequence that needs to be converted to RNA
+
+The fuction replaces every 'T' character with a 'U' character and is used in the GetRNATranscript and GetReadingFramesAsCodons functions.
+*/
+void DNAtoRNA(string & input){
+    for(auto ptr = input.begin(); ptr != input.end(); ++ptr){
+        if(*ptr == 'T'){
+            *ptr = 'U';
+        }
+    }
+}
+
+/*
+This function extracts codons from a given constant string reference into a 2d reference vector of strings
+
+input: RNA sequence that needs to be split into codons
+v: 2d Vector that will contain the codons extracted from input
+start: a position for where to insert additional codons into v
+
+The fuction extracts codons from the 3 different starting positions and is used in the GetReadingFramesAsCodons function.
+*/
+void ExtractCodons(const string & input, vector<vector<string>> & v, int start){
+    for(int i = 0; i < 3; i++){
+        for(size_t j = i; j < input.length()-2; j+=3){
+            v[i + start].push_back(input.substr(j,3));
+        }
+    }
+}
 
 /*
 This function should return the RNA transcript from a DNA sequence.
@@ -58,11 +93,7 @@ string GetRNATranscript(const string & input){
 
     GetReverseComplementSequence(input, &RNA_Transcript);
 
-    for(auto ptr = RNA_Transcript.begin(); ptr != RNA_Transcript.end(); ++ptr){
-        if(*ptr == 'T'){
-            *ptr = 'U';
-        }
-    }
+    DNAtoRNA(RNA_Transcript);
 
     return RNA_Transcript;
 }
@@ -108,8 +139,18 @@ AAUUCCCGAAA -> {"AAU", "UCC", "CGA"}
 AUUCCCGAAA -> {"AUU", "CCC", "GAA"}
 UUCCCGAAA -> {"UUC", "CCG", "AAA"}
 */
-std::vector<std::vector<std::string>> GetReadingFramesAsCodons(const std::string & input){
+vector<vector<string>> GetReadingFramesAsCodons(const string & input){
+    vector<vector<string>> out(6);
 
+    string RNA_Transcript = input;
+    DNAtoRNA(RNA_Transcript);
+
+    string RNA_Anti = GetRNATranscript(input);
+
+    ExtractCodons(RNA_Anti, out, 0);
+    ExtractCodons(RNA_Transcript, out, 3);
+
+    return out;
 }
 
 /*
@@ -145,8 +186,35 @@ more on them later):
 "P", "P", "S", "S", "S", "S", "S", "S", "T", "T", "T", "T", "W", "Y",
 "Y", "V", "V", "V", "V", "*", "*", "*"
 */
-std::string Translate(const std::vector<std::string> & codon_sequence){
+string Translate(const vector<string> & codon_sequence){
+    // codon_correspondence has two vectors
+    // codon_correspondence[0] is a vector of possible codon combinations
+    // codon_correspondence[1] is a vector of the corresponding amino acids
+    vector<vector<string>> codon_correspondence = {{
+        "GCU", "GCC", "GCA", "GCG", "CGU", "CGC", "CGA", "CGG", "AGA", "AGG",
+        "AAU", "AAC", "GAU", "GAC", "UGU", "UGC", "CAA", "CAG", "GAA", "GAG",
+        "GGU", "GGC", "GGA", "GGG", "CAU", "CAC", "AUU", "AUC", "AUA", "UUA",
+        "UUG", "CUU", "CUC", "CUA", "CUG", "AAA", "AAG", "AUG", "UUU", "UUC",
+        "CCU", "CCC", "CCA", "CCG", "UCU", "UCC", "UCA", "UCG", "AGU", "AGC",
+        "ACU", "ACC", "ACA", "ACG", "UGG", "UAU", "UAC", "GUU", "GUC", "GUA",
+        "GUG", "UAG", "UGA", "UAA"}, 
+        {"A", "A", "A", "A", "R", "R", "R", "R", "R", "R", "N", "N", "D", "D",
+        "C", "C", "Q", "Q", "E", "E", "G", "G", "G", "G", "H", "H", "I", "I",
+        "I", "L", "L", "L", "L", "L", "L", "K", "K", "M", "F", "F", "P", "P",
+        "P", "P", "S", "S", "S", "S", "S", "S", "T", "T", "T", "T", "W", "Y",
+        "Y", "V", "V", "V", "V", "*", "*", "*"}};
+    string out = "";
 
+    for(auto & str: codon_sequence){
+        for(size_t i = 0; i < codon_correspondence[0].size(); i++){
+            if(str == codon_correspondence[0][i]){
+                out += codon_correspondence[1][i];
+                break;
+            }
+        }
+    }
+
+    return out;
 }
 
 /*
@@ -162,6 +230,28 @@ one found.
 Return the longest open reading frame as an amino acid sequence. It must start
 with an 'M' and end with a '*' with no other '*''s within.
 */
-std::string GetLongestOpenReadingFrame(const std::string & DNA_sequence){
+string GetLongestOpenReadingFrame(const string & DNA_sequence){
+    vector<vector<string>> codons = GetReadingFramesAsCodons(DNA_sequence);
+    string amino_acid = "", temp = "", longest = "";
 
+    for(vector<string> & vec: codons){
+        amino_acid = Translate(vec);
+
+        string::iterator find_pos = amino_acid.end();
+        for(auto ptr = amino_acid.begin(); ptr != amino_acid.end(); ++ptr){
+            if(*ptr == 'M'){
+                find_pos = find(ptr, amino_acid.end(), '*');
+                if(find_pos != amino_acid.end()){
+                    temp = accumulate(ptr, ++find_pos, string(""));
+
+                    if(temp.length() > longest.length()){
+                        longest = temp;
+                        temp = "";
+                    }
+                }
+            }
+        }
+    }
+
+    return longest;
 }
