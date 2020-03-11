@@ -1,3 +1,8 @@
+/*  Reid Harry
+    3/11/2020
+    Reads in a DNA Sequence and outputs details about the RNA transcript and Amino Acids associated with the sequence.
+*/
+
 #include <iostream>
 using std::cout; using std::cin; using std::endl;
 #include <string>

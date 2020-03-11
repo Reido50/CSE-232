@@ -29,6 +29,25 @@ reverse complement = CCCCGAATTT
 */
 void GetReverseComplementSequence(const std::string & input,  std::string * const output);
 
+/*
+This function converts a string reference of DNA into RNA
+
+input: DNA sequence that needs to be converted to RNA
+
+The fuction replaces every 'T' character with a 'U' character and is used in the GetRNATranscript and GetReadingFramesAsCodons functions.
+*/
+void DNAToRNA(string & input);
+
+/*
+This function extracts codons from a given constant string reference into a 2d reference vector of strings
+
+input: RNA sequence that needs to be split into codons
+codons: 2d Vector that will contain the codons extracted from input
+start: a position for where to insert additional codons into v
+
+The fuction extracts codons from the 3 different starting positions and is used in the GetReadingFramesAsCodons function.
+*/
+void ExtractCodons(const string & input, vector<vector<string>> & codons, int start);
 
 /*
 This function should return the RNA transcript from a DNA sequence.

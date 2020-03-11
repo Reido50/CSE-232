@@ -55,7 +55,7 @@ input: DNA sequence that needs to be converted to RNA
 
 The fuction replaces every 'T' character with a 'U' character and is used in the GetRNATranscript and GetReadingFramesAsCodons functions.
 */
-void DNAtoRNA(string & input){
+void DNAToRNA(string & input){
     for(auto ptr = input.begin(); ptr != input.end(); ++ptr){
         if(*ptr == 'T'){
             *ptr = 'U';
@@ -67,15 +67,15 @@ void DNAtoRNA(string & input){
 This function extracts codons from a given constant string reference into a 2d reference vector of strings
 
 input: RNA sequence that needs to be split into codons
-v: 2d Vector that will contain the codons extracted from input
+codons: 2d Vector that will contain the codons extracted from input
 start: a position for where to insert additional codons into v
 
 The fuction extracts codons from the 3 different starting positions and is used in the GetReadingFramesAsCodons function.
 */
-void ExtractCodons(const string & input, vector<vector<string>> & v, int start){
+void ExtractCodons(const string & input, vector<vector<string>> & codons, int start){
     for(int i = 0; i < 3; i++){
         for(size_t j = i; j < input.length()-2; j+=3){
-            v[i + start].push_back(input.substr(j,3));
+            codons[i + start].push_back(input.substr(j,3));
         }
     }
 }
@@ -89,13 +89,13 @@ has U (uracil) instead of T (thiamine).
 Make sure you don't have any redundant code.
 */
 string GetRNATranscript(const string & input){
-    string RNA_Transcript;
+    string RNA_transcript;
 
-    GetReverseComplementSequence(input, &RNA_Transcript);
+    GetReverseComplementSequence(input, &RNA_transcript);
 
-    DNAtoRNA(RNA_Transcript);
+    DNAToRNA(RNA_transcript);
 
-    return RNA_Transcript;
+    return RNA_transcript;
 }
 
 
@@ -140,17 +140,17 @@ AUUCCCGAAA -> {"AUU", "CCC", "GAA"}
 UUCCCGAAA -> {"UUC", "CCG", "AAA"}
 */
 vector<vector<string>> GetReadingFramesAsCodons(const string & input){
-    vector<vector<string>> out(6);
+    vector<vector<string>> codons(6);
 
-    string RNA_Transcript = input;
-    DNAtoRNA(RNA_Transcript);
+    string RNA_transcript = input;
+    DNAToRNA(RNA_transcript);
 
-    string RNA_Anti = GetRNATranscript(input);
+    string RNA_transcript_antiparallel = GetRNATranscript(input);
 
-    ExtractCodons(RNA_Anti, out, 0);
-    ExtractCodons(RNA_Transcript, out, 3);
+    ExtractCodons(RNA_transcript_antiparallel, codons, 0);
+    ExtractCodons(RNA_transcript, codons, 3);
 
-    return out;
+    return codons;
 }
 
 /*
@@ -187,7 +187,7 @@ more on them later):
 "Y", "V", "V", "V", "V", "*", "*", "*"
 */
 string Translate(const vector<string> & codon_sequence){
-    // codon_correspondence has two vectors
+    // codon_correspondence contains two vectors
     // codon_correspondence[0] is a vector of possible codon combinations
     // codon_correspondence[1] is a vector of the corresponding amino acids
     vector<vector<string>> codon_correspondence = {{
@@ -203,18 +203,18 @@ string Translate(const vector<string> & codon_sequence){
         "I", "L", "L", "L", "L", "L", "L", "K", "K", "M", "F", "F", "P", "P",
         "P", "P", "S", "S", "S", "S", "S", "S", "T", "T", "T", "T", "W", "Y",
         "Y", "V", "V", "V", "V", "*", "*", "*"}};
-    string out = "";
+    string amino_acid_chain = "";
 
-    for(auto & str: codon_sequence){
+    for(auto & codon: codon_sequence){
         for(size_t i = 0; i < codon_correspondence[0].size(); i++){
-            if(str == codon_correspondence[0][i]){
-                out += codon_correspondence[1][i];
+            if(codon == codon_correspondence[0][i]){
+                amino_acid_chain += codon_correspondence[1][i];
                 break;
             }
         }
     }
 
-    return out;
+    return amino_acid_chain;
 }
 
 /*
@@ -232,21 +232,23 @@ with an 'M' and end with a '*' with no other '*''s within.
 */
 string GetLongestOpenReadingFrame(const string & DNA_sequence){
     vector<vector<string>> codons = GetReadingFramesAsCodons(DNA_sequence);
-    string amino_acid = "", temp = "", longest = "";
+    string amino_acid_chain = "", temp = "", longest = "";
 
     for(vector<string> & vec: codons){
-        amino_acid = Translate(vec);
+        amino_acid_chain = Translate(vec);
 
-        string::iterator find_pos = amino_acid.end();
-        for(auto ptr = amino_acid.begin(); ptr != amino_acid.end(); ++ptr){
+        string::iterator find_pos = amino_acid_chain.end();
+
+        // Traverse the amino_acid_chain to find and compare the lengths of open reading frames.
+        // If a found open reading frame is longer than the open reading frame in longest, replace it
+        for(auto ptr = amino_acid_chain.begin(); ptr != amino_acid_chain.end(); ++ptr){
             if(*ptr == 'M'){
-                find_pos = find(ptr, amino_acid.end(), '*');
-                if(find_pos != amino_acid.end()){
+                find_pos = find(ptr, amino_acid_chain.end(), '*');
+                if(find_pos != amino_acid_chain.end()){
                     temp = accumulate(ptr, ++find_pos, string(""));
 
                     if(temp.length() > longest.length()){
                         longest = temp;
-                        temp = "";
                     }
                 }
             }
