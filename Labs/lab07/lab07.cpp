@@ -22,7 +22,16 @@ uses width to space elements (setw). Default is 3
 */
 template<typename T>
 string matrix_to_str(const matrix<T> &m1, size_t width=3){
+  ostringstream out;
 
+  for(auto i = 0; i < m1.size(); i++){
+    for(auto j = 0; j < m1[i].size(); j++){
+      out << setw(width) << m1[i][j];
+    }
+    out << endl;
+  }
+
+  return out.str();
 }
 
 /*
@@ -31,7 +40,7 @@ false otherwise
 */
 template<typename T>
 bool same_size(const matrix<T>& m1, const matrix<T>& m2){
-
+  return (m1.size() == m2.size() && m1[1].size() == m2[1].size());
 }
 
 /*
@@ -41,7 +50,18 @@ matrices must not be empty and must be the same shape:
 */
 template<typename T>
 matrix<T> add(const matrix<T>& m1, const matrix<T>& m2){
+  matrix<T> out;
 
+  if(same_size(m1, m2)){
+    for(auto i = 0; i < m1.size(); i++){
+      out.push_back(matrix_row<T>());
+      for(auto j = 0; j < m1[i].size(); j++){
+        out[i].push_back(m1[i][j] + m2[i][j]);
+      }
+    }
+  }
+
+  return out;
 }
 
 /* 
@@ -51,7 +71,18 @@ matrix must not be empty:
 */
 template<typename T>
 matrix<T> scalar_multiply(const matrix<T> &m, const T & val){
+  matrix<T> out;
 
+  if(!m.empty()){
+    for(auto i = 0; i < m.size(); i++){
+      out.push_back(matrix_row<T>());
+      for(auto j = 0; j < m[i].size(); j++){
+        out[i].push_back(m[i][j] * val);
+      }
+    }
+  }
+
+  return out;
 }
     
 int main(){
@@ -68,7 +99,6 @@ int main(){
   else
     cout << "could not add" << endl;
 
-  /*
   // case 2
   cout << "Case 2" << endl;
   result = add(m1, m2);
@@ -95,5 +125,4 @@ int main(){
     cout << matrix_to_str(result) << endl;
   else
     cout << "could not multiply" << endl; 
-  */
 }
