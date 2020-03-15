@@ -10,7 +10,10 @@
 using std::vector;
 #include<algorithm>
 using std::sort;
+#include<numeric>
+using std::iota;
 
-void seriesOfLetters(vector<char> chars){
+void seriesOfLetters(vector<char> & chars){
     sort(chars.begin(), chars.end());
+    iota(chars.begin(), chars.end(), chars[0]);
 }
