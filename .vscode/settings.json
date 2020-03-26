@@ -33,6 +33,7 @@
         "xlocnum": "cpp",
         "xloctime": "cpp",
         "xmemory0": "cpp",
-        "xstddef": "cpp"
+        "xstddef": "cpp",
+        "numeric": "cpp"
     }
 }
