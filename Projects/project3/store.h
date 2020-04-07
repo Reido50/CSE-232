@@ -48,12 +48,12 @@
     Sparty's has 3 distinct items.
 */
 
+#ifndef STORE
+#define STORE
+
 #include "item.h"
 #include<string>
 using std::string;
-
-#ifndef STORE
-#define STORE
 
 class Store{
 private:
