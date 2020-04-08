@@ -54,14 +54,36 @@
 #include "item.h"
 #include<string>
 using std::string;
+#include<vector>
+using std::vector;
 
 class Store{
 private:
     string name_;
     string location_;
-    
+    vector<Item> items_;
 
+public:
+    // constructors
+    Store(string n, string l): name_(n), location_(l) {};
+    Store(const Store& s);
+
+    // getters
+    string name() const {return name_;}
+    string location() const {return location_;}
+    vector<Item> items() const {return items_;}
+    long getItemsSize();
+
+    // setters
+    void name(string n);
+    void location(string l);
+    void addItem(string n, long q, long p);
+    void addItem(const Item& i);
+
+    // friends
+    friend ostream& operator<<(ostream& o, const Store& s);
 };
 
+ostream& operator<<(ostream& o, const Store& s);
 
 #endif
