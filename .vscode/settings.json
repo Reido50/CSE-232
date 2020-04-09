@@ -35,6 +35,25 @@
         "xmemory0": "cpp",
         "xstddef": "cpp",
         "numeric": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "cctype": "cpp",
+        "cmath": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "iostream": "cpp",
+        "iterator": "cpp",
+        "limits": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "typeinfo": "cpp",
+        "unordered_map": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xmemory": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp"
     }
 }
